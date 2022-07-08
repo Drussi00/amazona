@@ -1,19 +1,36 @@
 import { createTheme } from "@mui/material/styles";
+import { useContext, useEffect, useState } from "react";
 import {
+  AppBar,
+  Badge,
+  Box,
+  Button,
+  Container,
   CssBaseline,
+  Divider,
+  Drawer,
+  IconButton,
+  InputBase,
+  Link,
+  List,
+  ListItem,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Switch,
   ThemeProvider,
   Toolbar,
-  AppBar,
-  Link,
   Typography,
-  Box,
-  Container,
+  useMediaQuery,
 } from "@mui/material/";
 import Head from "next/head";
 import NextLink from "next/link";
 import classes from "../utils/classes";
-
+import { Store } from "../utils/Store";
+import Cookies from "js-cookie";
 export default function Layout({ title, description, children }) {
+  const { state, dispatch } = useContext(Store);
+  const { darkMode } = state;
   const theme = createTheme({
     components: { MuiLink: { defaultProps: { underline: "hover" } } },
     typography: {
@@ -21,11 +38,16 @@ export default function Layout({ title, description, children }) {
       h2: { fontSize: "1.4rem", fontWeight: "400", margin: "1rem 0" },
     },
     palette: {
-      mode: "light",
+      mode: darkMode ? "dark" : "light",
       primary: { main: "#f0c000" },
       secondary: { main: "#208080" },
     },
   });
+  const darkModeChangeHandler = () => {
+    dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
+    const newDarkMode = !darkMode;
+    Cookies.set("darkMode", newDarkMode ? "ON" : "OFF");
+  };
   return (
     <>
       <Head>
@@ -36,11 +58,19 @@ export default function Layout({ title, description, children }) {
         <CssBaseline />
         <AppBar position="static" sx={classes.appbar}>
           <Toolbar sx={classes.toolbar}>
-            <NextLink href="/" passHref>
-              <Link>
-                <Typography sx={classes.brand}>Amazona</Typography>
-              </Link>
-            </NextLink>
+            <Box display="flex" alignItems="center">
+              <NextLink href="/" passHref>
+                <Link>
+                  <Typography sx={classes.brand}>Amazona</Typography>
+                </Link>
+              </NextLink>
+            </Box>
+            <Box>
+              <Switch
+                checked={darkMode}
+                onChange={darkModeChangeHandler}
+              ></Switch>
+            </Box>
           </Toolbar>
         </AppBar>
         <Container sx={classes.main} componenet="main">

@@ -4,7 +4,7 @@ const classes = {
     marginBottom: 1,
   },
   smallText: {
-    fontSize: "15px",
+    fontSize: "13px",
   },
   main: {
     marginTop: 2,
