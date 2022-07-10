@@ -31,10 +31,10 @@ export default function ShippingScreen() {
       return router.push("/login?redirect=/shipping");
     }
     setValue("fullName", shippingAddress.fullName);
-    setValue("fullName", shippingAddress.address);
-    setValue("fullName", shippingAddress.city);
-    setValue("fullName", shippingAddress.postalCode);
-    setValue("fullName", shippingAddress.country);
+    setValue("address", shippingAddress.address);
+    setValue("city", shippingAddress.city);
+    setValue("postalCode", shippingAddress.postalCode);
+    setValue("country", shippingAddress.country);
   }, [router, setValue, shippingAddress, userInfo]);
 
   const submitHanlder = ({ fullName, address, city, postalCode, country }) => {
