@@ -11,7 +11,7 @@ import {
   Rating,
 } from "@mui/material";
 import { urlForThumbnail } from "../utils/image";
-const productItem = ({ product }) => {
+const productItem = ({ product, addToCartHandler }) => {
   return (
     <Card>
       <NextLink href={`/product/${product.slug.current}`} passHref>
@@ -30,7 +30,11 @@ const productItem = ({ product }) => {
       <CardActions>
         <Typography>${product.price}</Typography>
       </CardActions>
-      <Button size="small" color="primary">
+      <Button
+        size="small"
+        color="primary"
+        onClick={() => addToCartHandler(product)}
+      >
         add to cart
       </Button>
     </Card>

@@ -28,9 +28,15 @@ import NextLink from "next/link";
 import classes from "../utils/classes";
 import { Store } from "../utils/Store";
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import jsCookie from "js-cookie";
+////////////////////////////////////////////////////////////////////////////////////////////
 export default function Layout({ title, description, children }) {
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
-  const { darkMode } = state;
+  const { darkMode, cart, userInfo } = state;
+  const [anchorEl, setAnchorEl] = useState(null);
+
   const theme = createTheme({
     components: { MuiLink: { defaultProps: { underline: "hover" } } },
     typography: {
@@ -43,11 +49,31 @@ export default function Layout({ title, description, children }) {
       secondary: { main: "#208080" },
     },
   });
+
   const darkModeChangeHandler = () => {
     dispatch({ type: darkMode ? "DARK_MODE_OFF" : "DARK_MODE_ON" });
     const newDarkMode = !darkMode;
     Cookies.set("darkMode", newDarkMode ? "ON" : "OFF");
   };
+
+  const loginMenuCloseHandler = (e, redirect) => {
+    setAnchorEl(null);
+    if (redirect) {
+      router.push(redirect);
+    }
+  };
+  const loginClickHanlder = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const logoutClickHandler = () => {
+    setAnchorEl(null);
+    dispatch({ type: "USER_LOGOUT" });
+    jsCookie.remove("userInfo");
+    jsCookie.remove("cartItems");
+    jsCookie.remove("shippingAddress");
+    router.push("/");
+  };
+
   return (
     <>
       <Head>
@@ -70,6 +96,52 @@ export default function Layout({ title, description, children }) {
                 checked={darkMode}
                 onChange={darkModeChangeHandler}
               ></Switch>
+              <NextLink href="/cart" passHref>
+                <Link>
+                  <Typography component="span">
+                    {cart.cartItems.length > 0 ? (
+                      <Badge
+                        color="secondary"
+                        badgeContent={cart.cartItems.length}
+                      >
+                        Cart
+                      </Badge>
+                    ) : (
+                      "Cart"
+                    )}
+                  </Typography>
+                </Link>
+              </NextLink>
+              {userInfo ? (
+                <>
+                  <Button
+                    aria-controls="simple-menu"
+                    aria-haspopup="true"
+                    sx={classes.navbarButton}
+                    onClick={loginClickHanlder}
+                  >
+                    {userInfo.name}
+                  </Button>
+                  <Menu
+                    id="simple-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={loginMenuCloseHandler}
+                  >
+                    <MenuItem
+                      onClick={(e) => loginMenuCloseHandler(e, "/profile")}
+                    >
+                      Profile
+                    </MenuItem>
+                    <MenuItem onClick={logoutClickHandler}>LogOut</MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <NextLink href="/login" passHref>
+                  <Link>Login</Link>
+                </NextLink>
+              )}
             </Box>
           </Toolbar>
         </AppBar>

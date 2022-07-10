@@ -25,7 +25,9 @@ import { Store } from "../utils/Store";
 import axios from "axios";
 import { useSnackbar } from "notistack";
 import { urlForThumbnail } from "../utils/image";
+import { useRouter } from "next/router";
 function CartScreen() {
+  const router = useRouter();
   const {
     state: {
       cart: { cartItems },
@@ -82,7 +84,7 @@ function CartScreen() {
                   <TableRow>
                     <TableCell>Image</TableCell>
                     <TableCell>Name</TableCell>
-                    <TableCell align="right">Qauntity</TableCell>
+                    <TableCell align="right">Quantity</TableCell>
                     <TableCell align="right">Price</TableCell>
                     <TableCell align="right">Action</TableCell>
                   </TableRow>
@@ -152,7 +154,14 @@ function CartScreen() {
                   </Typography>
                 </ListItem>
                 <ListItem>
-                  <Button fullWidth color="primary" variant="contained">
+                  <Button
+                    onClick={() => {
+                      router.push("/shipping");
+                    }}
+                    fullWidth
+                    color="primary"
+                    variant="contained"
+                  >
                     Checkout
                   </Button>
                 </ListItem>
