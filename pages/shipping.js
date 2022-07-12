@@ -8,8 +8,6 @@ import { useRouter } from "next/router";
 import { Store } from "../utils/Store";
 import jsCookie from "js-cookie";
 
-////////////////////////////////////////////////////////////////
-
 export default function ShippingScreen() {
   const {
     handleSubmit,
@@ -18,9 +16,7 @@ export default function ShippingScreen() {
     setValue,
   } = useForm();
   const router = useRouter();
-
   const { state, dispatch } = useContext(Store);
-
   const {
     userInfo,
     cart: { shippingAddress },
@@ -30,6 +26,7 @@ export default function ShippingScreen() {
     if (!userInfo) {
       return router.push("/login?redirect=/shipping");
     }
+
     setValue("fullName", shippingAddress.fullName);
     setValue("address", shippingAddress.address);
     setValue("city", shippingAddress.city);
@@ -37,21 +34,27 @@ export default function ShippingScreen() {
     setValue("country", shippingAddress.country);
   }, [router, setValue, shippingAddress, userInfo]);
 
-  const submitHanlder = ({ fullName, address, city, postalCode, country }) => {
+  const submitHandler = ({ fullName, address, city, postalCode, country }) => {
     dispatch({
       type: "SAVE_SHIPPING_ADDRESS",
       payload: { fullName, address, city, postalCode, country },
     });
     jsCookie.set(
       "shippingAddress",
-      JSON.stringify({ fullName, address, city, postalCode, country })
+      JSON.stringify({
+        fullName,
+        address,
+        city,
+        postalCode,
+        country,
+      })
     );
     router.push("/payment");
   };
   return (
-    <Layout>
+    <Layout title="Shipping Address">
       <CheckoutWizard activeStep={1}></CheckoutWizard>
-      <Form onSubmit={handleSubmit(submitHanlder)}>
+      <Form onSubmit={handleSubmit(submitHandler)}>
         <Typography component="h1" variant="h1">
           Shipping Address
         </Typography>
@@ -92,6 +95,7 @@ export default function ShippingScreen() {
               defaultValue=""
               rules={{
                 required: true,
+                minLength: 2,
               }}
               render={({ field }) => (
                 <TextField
@@ -103,8 +107,8 @@ export default function ShippingScreen() {
                   error={Boolean(errors.address)}
                   helperText={
                     errors.address
-                      ? errors.address.type === "pattern"
-                        ? "Address is not valid"
+                      ? errors.address.type === "minLength"
+                        ? "Address length is more than 1"
                         : "Address is required"
                       : ""
                   }
@@ -120,6 +124,7 @@ export default function ShippingScreen() {
               defaultValue=""
               rules={{
                 required: true,
+                minLength: 2,
               }}
               render={({ field }) => (
                 <TextField
@@ -131,8 +136,8 @@ export default function ShippingScreen() {
                   error={Boolean(errors.city)}
                   helperText={
                     errors.city
-                      ? errors.city.type === "pattern"
-                        ? "City is not valid"
+                      ? errors.city.type === "minLength"
+                        ? "City length is more than 1"
                         : "City is required"
                       : ""
                   }
@@ -148,6 +153,7 @@ export default function ShippingScreen() {
               defaultValue=""
               rules={{
                 required: true,
+                minLength: 2,
               }}
               render={({ field }) => (
                 <TextField
@@ -159,8 +165,8 @@ export default function ShippingScreen() {
                   error={Boolean(errors.postalCode)}
                   helperText={
                     errors.postalCode
-                      ? errors.postalCode.type === "pattern"
-                        ? "Postal Code is not valid"
+                      ? errors.postalCode.type === "minLength"
+                        ? "Postal Code length is more than 1"
                         : "Postal Code is required"
                       : ""
                   }
@@ -176,19 +182,20 @@ export default function ShippingScreen() {
               defaultValue=""
               rules={{
                 required: true,
+                minLength: 2,
               }}
               render={({ field }) => (
                 <TextField
                   variant="outlined"
                   fullWidth
-                  id="country"
+                  id="postalCode"
                   label="Country"
                   inputProps={{ type: "country" }}
                   error={Boolean(errors.country)}
                   helperText={
                     errors.country
-                      ? errors.country.type === "pattern"
-                        ? "Country is not valid"
+                      ? errors.country.type === "minLength"
+                        ? "Country length is more than 1"
                         : "Country is required"
                       : ""
                   }
