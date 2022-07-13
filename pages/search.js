@@ -9,31 +9,31 @@ import {
   Rating,
   Select,
   Typography,
-} from '@mui/material';
-import { Box } from '@mui/system';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
-import React, { useContext, useEffect, useState } from 'react';
-import Layout from '../components/Layout';
-import ProductItem from '../components/ProductItem';
-import classes from '../utils/classes';
-import client from '../utils/client';
-import { urlForThumbnail } from '../utils/image';
-import { Store } from '../utils/Store';
+} from "@mui/material";
+import { Box } from "@mui/system";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
+import React, { useContext, useEffect, useState } from "react";
+import Layout from "../components/Layout";
+import ProductItem from "../components/ProductItem";
+import classes from "../utils/classes";
+import client from "../utils/client";
+import { urlForThumbnail } from "../utils/image";
+import { Store } from "../utils/Store";
 
 const prices = [
   {
-    name: '$1 to $50',
-    value: '1-50',
+    name: "$1 to $50",
+    value: "1-50",
   },
   {
-    name: '$51 to $200',
-    value: '51-200',
+    name: "$51 to $200",
+    value: "51-200",
   },
   {
-    name: '$201 to $1000',
-    value: '201-1000',
+    name: "$201 to $1000",
+    value: "201-1000",
   },
 ];
 
@@ -42,16 +42,16 @@ const ratings = [1, 2, 3, 4, 5];
 export default function SearchScreen() {
   const router = useRouter();
   const {
-    category = 'all',
-    query = 'all',
-    price = 'all',
-    rating = 'all',
-    sort = 'default',
+    category = "all",
+    query = "all",
+    price = "all",
+    rating = "all",
+    sort = "default",
   } = router.query;
   const [state, setState] = useState({
     categories: [],
     products: [],
-    error: '',
+    error: "",
     loading: true,
   });
 
@@ -62,34 +62,35 @@ export default function SearchScreen() {
       try {
         const { data } = await axios.get(`/api/products/categories`);
         setCategories(data);
+        console.log(data);
       } catch (err) {
         console.log(err.message);
       }
+      fetchCategories();
     };
-    fetchCategories();
 
     const fetchData = async () => {
       try {
         let gQuery = '*[_type == "product"';
-        if (category !== 'all') {
+        if (category !== "all") {
           gQuery += ` && category match "${category}" `;
         }
-        if (query !== 'all') {
+        if (query !== "all") {
           gQuery += ` && name match "${query}" `;
         }
-        if (price !== 'all') {
-          const minPrice = Number(price.split('-')[0]);
-          const maxPrice = Number(price.split('-')[1]);
+        if (price !== "all") {
+          const minPrice = Number(price.split("-")[0]);
+          const maxPrice = Number(price.split("-")[1]);
           gQuery += ` && price >= ${minPrice} && price <= ${maxPrice}`;
         }
-        if (rating !== 'all') {
+        if (rating !== "all") {
           gQuery += ` && rating >= ${Number(rating)} `;
         }
-        let order = '';
-        if (sort !== 'default') {
-          if (sort === 'lowest') order = '| order(price asc)';
-          if (sort === 'highest') order = '| order(price desc)';
-          if (sort === 'toprated') order = '| order(rating desc)';
+        let order = "";
+        if (sort !== "default") {
+          if (sort === "lowest") order = "| order(price asc)";
+          if (sort === "highest") order = "| order(price desc)";
+          if (sort === "toprated") order = "| order(rating desc)";
         }
 
         gQuery += `] ${order}`;
@@ -142,11 +143,11 @@ export default function SearchScreen() {
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if (data.countInStock < quantity) {
-      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      enqueueSnackbar("Sorry. Product is out of stock", { variant: "error" });
       return;
     }
     dispatch({
-      type: 'CART_ADD_ITEM',
+      type: "CART_ADD_ITEM",
       payload: {
         _key: product._id,
         name: product.name,
@@ -158,9 +159,9 @@ export default function SearchScreen() {
       },
     });
     enqueueSnackbar(`${product.name} added to the cart`, {
-      variant: 'success',
+      variant: "success",
     });
-    router.push('/cart');
+    router.push("/cart");
   };
 
   return (
@@ -214,15 +215,15 @@ export default function SearchScreen() {
         <Grid item md={9}>
           <Grid container justifyContent="space-between" alignItems="center">
             <Grid item>
-              {products && products.length !== 0 ? products.length : 'No'}{' '}
+              {products && products.length !== 0 ? products.length : "No"}{" "}
               Results
-              {query !== 'all' && query !== '' && ' : ' + query}
-              {price !== 'all' && ' : Price ' + price}
-              {rating !== 'all' && ' : Rating ' + rating + ' & up'}
-              {(query !== 'all' && query !== '') ||
-              rating !== 'all' ||
-              price !== 'all' ? (
-                <Button onClick={() => router.push('/search')}>X</Button>
+              {query !== "all" && query !== "" && " : " + query}
+              {price !== "all" && " : Price " + price}
+              {rating !== "all" && " : Rating " + rating + " & up"}
+              {(query !== "all" && query !== "") ||
+              rating !== "all" ||
+              price !== "all" ? (
+                <Button onClick={() => router.push("/search")}>X</Button>
               ) : null}
             </Grid>
 
