@@ -62,12 +62,11 @@ export default function SearchScreen() {
       try {
         const { data } = await axios.get(`/api/products/categories`);
         setCategories(data);
-        console.log(data);
       } catch (err) {
         console.log(err.message);
       }
-      fetchCategories();
     };
+    fetchCategories();
 
     const fetchData = async () => {
       try {
